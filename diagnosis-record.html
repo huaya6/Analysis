@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#1259e5">
+  <meta name="description" content="星河智源产品交互与视觉诊断记录：交互体验与视觉体验八类详细诊断。">
+  <title>产品交互与视觉诊断记录</title>
+  <style>:root {
+  --ink: #203344;
+  --body: #354b5c;
+  --muted: #637686;
+  --accent: #1259e5;
+  --accent-soft: #edf2fd;
+  --accent-pale: #f6f8fe;
+  --accent-border: #c4d5f8;
+  --accent-mid: #89acf2;
+  --accent-hover: #dbe6fb;
+  --accent-deep: #0e47b7;
+  --line: #dce6fb;
+  --surface: #fff;
+  --page: #f4f7fd;
+  color-scheme: light;
+  font-family: Arial, "Noto Sans SC", "Source Han Sans CN", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-synthesis: none;
+  scroll-behavior: smooth;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; color: var(--body); background: var(--page); font-size: 16px; line-height: 1.85; -webkit-font-smoothing: antialiased; }
+button, a { -webkit-tap-highlight-color: transparent; }
+button { color: inherit; font: inherit; cursor: pointer; }
+a { color: inherit; }
+button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+h1, h2, h3, h4, p { margin: 0; }
+h1, h2, h3, h4 { color: var(--ink); font-weight: 600; line-height: 1.5; text-wrap: balance; }
+p { overflow-wrap: anywhere; }
+strong { color: var(--ink); font-weight: 600; }
+
+.reading-progress { position: fixed; z-index: 30; top: 0; left: 0; width: 100%; height: 2px; background: transparent; }
+.reading-progress > span { display: block; width: 0; height: 100%; background: var(--accent); }
+
+.report-cover {
+  display: flex;
+  width: min(1376px, calc(100% - 64px));
+  min-height: min(760px, calc(100svh - 72px));
+  margin: 36px auto 24px;
+  padding: 48px 62px 38px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: 0 8px 32px #20334403;
+  flex-direction: column;
+  scroll-margin-top: 28px;
+}
+
+.cover-top { display: flex; align-items: center; justify-content: space-between; gap: 24px; color: var(--muted); font-size: 13px; }
+.cover-logo { display: block; width: 145px; height: auto; }
+.cover-body { display: flex; max-width: 900px; margin: auto 0; padding: 48px 0; flex-direction: column; justify-content: center; }
+.cover-kicker { display: flex; align-items: center; gap: 12px; margin-bottom: 23px; color: var(--accent); font-size: 14px; font-weight: 600; letter-spacing: 0.02em; }
+.cover-kicker::before { width: 2px; height: 28px; background: var(--accent-mid); content: ""; }
+.cover-body h1 { max-width: 920px; font-size: clamp(42px, 5vw, 66px); font-weight: 500; line-height: 1.28; letter-spacing: -0.04em; white-space: nowrap; }
+.cover-subtitle { margin-top: 29px; color: var(--muted); font-size: 17px; line-height: 1.8; }
+.cover-stats { display: flex; margin-top: 25px; gap: 12px 24px; color: var(--muted); font-size: 13px; flex-wrap: wrap; }
+.cover-stats strong { margin-right: 5px; color: var(--accent); font-size: 20px; font-weight: 500; font-variant-numeric: tabular-nums; }
+
+.cover-bottom { display: grid; padding-top: 28px; border-top: 1px solid var(--line); grid-template-columns: 170px minmax(0, 1fr); gap: 32px; align-items: start; }
+.cover-enter-group { display: grid; gap: 10px; }
+.cover-enter { display: inline-flex; align-items: center; gap: 18px; color: var(--accent); font-size: 14px; font-weight: 600; text-decoration: none; white-space: nowrap; }
+.cover-secondary-actions { display: grid; gap: 3px; }
+.cover-secondary-actions a { width: fit-content; color: var(--muted); font-size: 11px; text-decoration: none; }
+.cover-secondary-actions a:hover { color: var(--accent); }
+.cover-index { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.cover-index a { display: flex; color: var(--muted); font-size: 12px; line-height: 1.7; text-decoration: none; flex-direction: column; gap: 5px; }
+.cover-index a span { color: var(--ink); }
+.cover-index a:hover { color: var(--accent); }
+
+.report-layout { display: grid; width: min(1440px, 100%); margin: 0 auto; padding: 30px 32px 70px; grid-template-columns: 220px minmax(0, 1fr); gap: 30px; align-items: start; }
+.contents { position: sticky; z-index: 5; top: 30px; display: block; max-height: calc(100svh - 60px); margin: 0; padding: 0; overflow: auto; }
+.contents-label { padding: 3px 12px 14px; color: var(--muted); font-size: 12px; letter-spacing: 0.08em; }
+.contents nav { display: grid; gap: 5px; }
+.contents a { display: flex; align-items: baseline; padding: 10px 12px; border-radius: 7px; color: var(--muted); font-size: 13px; line-height: 1.5; text-decoration: none; gap: 12px; }
+.contents a span { color: inherit; font-size: 12px; font-variant-numeric: tabular-nums; }
+.contents a:hover { color: var(--accent); }
+.contents a.active, .contents a[aria-current="true"] { color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+.chapter-subnav { display: grid; padding: 4px 0 8px 43px; gap: 3px; }
+.chapter-subnav a { padding: 4px 0; border-radius: 0; font-size: 12px; line-height: 1.7; }
+.contents-note { margin-top: 18px; padding: 14px 12px 0; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; line-height: 1.8; }
+
+.report-main { min-width: 0; }
+.report-section { margin-bottom: 28px; padding: 38px 40px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); box-shadow: 0 8px 32px #20334403; scroll-margin-top: 30px; }
+.section-heading { display: flex; align-items: flex-start; margin-bottom: 26px; padding-bottom: 23px; border-bottom: 1px solid var(--line); gap: 17px; }
+.section-number { color: var(--ink); font-size: 28px; font-weight: 400; line-height: 1.5; letter-spacing: -1px; font-variant-numeric: tabular-nums; }
+.section-heading h2 { font-size: 23px; letter-spacing: -0.3px; }
+.section-heading p { margin-top: 5px; color: var(--muted); font-size: 13px; line-height: 1.65; }
+.record-note { margin-bottom: 22px; padding: 17px 19px; border-left: 3px solid var(--accent-mid); background: var(--accent-pale); color: var(--body); font-size: 13px; line-height: 1.9; }
+
+.evidence-toolbar { display: flex; justify-content: flex-end; margin: 20px 0 10px; }
+.evidence-expand { min-height: 36px; padding: 7px 12px; border: 1px solid var(--line); border-radius: 5px; color: var(--accent); background: #fff; font-size: 12px; }
+.evidence-expand:hover { background: var(--accent-soft); }
+.evidence-group { margin: 14px 0 0; }
+.evidence { margin: 11px 0; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; background: #fff; scroll-margin-top: 30px; }
+.evidence summary { display: flex; align-items: center; min-height: 82px; padding: 18px 20px; cursor: pointer; list-style: none; gap: 18px; }
+.evidence summary::-webkit-details-marker { display: none; }
+.evidence-ids { display: flex; color: var(--accent); font-size: 12px; line-height: 1.75; flex: 0 0 92px; flex-direction: column; font-variant-numeric: tabular-nums; }
+.evidence-ids strong { color: var(--accent); font-size: 20px; font-weight: 500; }
+.evidence-title { display: flex; min-width: 0; flex: 1; flex-direction: column; }
+.evidence-title > strong { font-size: 16px; font-weight: 600; line-height: 1.65; }
+.diagnosis-topic-composition { margin-top: 3px; color: var(--muted); font-size: 12px; line-height: 1.7; }
+.evidence-toggle { margin-left: auto; color: var(--muted); font-size: 21px; font-weight: 300; }
+.evidence[open] .evidence-toggle { font-size: 0; }
+.evidence[open] .evidence-toggle::after { content: "−"; font-size: 21px; }
+.evidence[open] summary { border-bottom: 1px solid var(--line); background: var(--accent-soft); }
+.evidence-body { padding: 4px 25px 7px; }
+.evidence-body > .body-copy { margin: 0; padding: 17px 0; color: var(--body); font-size: 14px; line-height: 2; }
+.evidence-body > .body-copy + .body-copy { border-top: 1px solid var(--line); }
+.paragraph-lead { display: block; margin-bottom: 6px; color: var(--ink); font-weight: 600; }
+.q-record-link { color: var(--accent); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent); text-underline-offset: 3px; }
+.q-record-link:hover { text-decoration-color: currentColor; }
+
+.report-footer { display: flex; justify-content: space-between; padding: 0 5px; color: var(--muted); font-size: 12px; line-height: 1.8; gap: 16px; }
+.report-footer a { text-decoration: none; }
+.report-footer a:hover { color: var(--accent); }
+
+@media (min-width: 1450px) { .report-layout { gap: 48px; } }
+
+@media (max-width: 1000px) {
+  .report-layout { padding: 24px; grid-template-columns: 170px minmax(0, 1fr); gap: 22px; }
+  .report-section { padding: 28px; }
+  .cover-body h1 { font-size: 50px; }
+}
+
+@media (max-width: 760px) {
+  .report-cover { width: calc(100% - 32px); min-height: 620px; margin: 18px 16px 7px; padding: 28px 24px; }
+  .cover-logo { width: 122px; }
+  .cover-body { padding: 38px 0; }
+  .cover-body h1 { font-size: 36px; line-height: 1.4; white-space: normal; }
+  .cover-subtitle { margin-top: 22px; font-size: 14px; }
+  .cover-stats { gap: 8px 18px; }
+  .cover-stats strong { font-size: 17px; }
+  .cover-bottom { grid-template-columns: 1fr; gap: 22px; }
+  .cover-index { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .report-layout { display: block; padding: 0 16px 40px; }
+  .contents { position: sticky; z-index: 9; top: 0; display: block; max-height: none; margin-bottom: 3px; padding: 8px 0 12px; overflow: visible; background: var(--page); }
+  .contents nav { display: flex; overflow-x: auto; gap: 3px; flex-wrap: nowrap; scrollbar-width: none; }
+  .contents nav::-webkit-scrollbar { display: none; }
+  .contents nav > a { flex: none; padding: 7px 10px; font-size: 12px; white-space: nowrap; }
+  .contents nav > a span { display: none; }
+  .contents-label, .contents-note, .chapter-subnav { display: none !important; }
+  .report-section { margin-bottom: 19px; padding: 25px 21px; border-radius: 9px; scroll-margin-top: 58px; }
+  .section-heading { margin-bottom: 22px; padding-bottom: 19px; gap: 12px; }
+  .section-heading h2 { font-size: 21px; }
+  .section-heading p { font-size: 12px; }
+  .section-number { font-size: 24px; }
+  .record-note { padding: 15px 16px; }
+  .evidence { scroll-margin-top: 66px; }
+  .evidence summary { min-height: 74px; padding: 15px; gap: 12px; align-items: start; }
+  .evidence-ids { flex-basis: 64px; font-size: 11px; }
+  .evidence-ids strong { font-size: 17px; }
+  .evidence-title > strong { font-size: 14px; }
+  .diagnosis-topic-composition { font-size: 11px; }
+  .evidence-body { padding: 3px 18px 6px; }
+  .evidence-body > .body-copy { padding: 15px 0; font-size: 14px; }
+  .report-footer { align-items: flex-start; flex-direction: column; font-size: 11px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { scroll-behavior: auto; }
+  *, *::before, *::after { transition: none !important; }
+}
+
+@media print {
+  @page { size: A4; margin: 17mm; }
+  body { background: #fff; font-size: 11pt; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .reading-progress, .contents, .report-footer, .cover-secondary-actions, .evidence-toolbar, .evidence-toggle { display: none !important; }
+  .report-cover { width: 100%; min-height: 240mm; margin: 0; border: 0; box-shadow: none; break-after: page; }
+  .report-layout { display: block; width: 100%; padding: 0; }
+  .report-section { margin: 0; padding: 20px 0; border: 0; border-radius: 0; box-shadow: none; break-before: page; }
+  .section-heading, .evidence summary { break-after: avoid; }
+  .evidence { overflow: visible; break-inside: auto; }
+  .evidence-body > .body-copy { font-size: 10pt; line-height: 1.85; break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+  <div class="reading-progress" aria-hidden="true"><span></span></div>
+  <section id="cover" class="report-cover" aria-labelledby="cover-title">
+    <div class="cover-top"><img src="data:image/png;base64,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" alt="星河智源" class="cover-logo"><span>产品体验走查</span></div>
+    <div class="cover-body">
+      <p class="cover-kicker">星河智源 SaaS</p>
+      <h1 id="cover-title">产品交互 &amp; 视觉诊断记录</h1>
+      <p class="cover-subtitle">按交互与视觉两大维度归档八类详细诊断，供产品、设计与研发核查和讨论。</p>
+      <div class="cover-stats" aria-label="诊断范围">
+        <span><strong>80</strong>项体验发现</span>
+        <span><strong>38</strong>个页面／任务</span>
+        <span><strong>8</strong>类诊断主题</span>
+      </div>
+    </div>
+    <div class="cover-bottom">
+      <div class="cover-enter-group">
+        <a class="cover-enter" href="#interaction-diagnosis">阅读记录 <span aria-hidden="true">↓</span></a>
+        <nav class="cover-secondary-actions" aria-label="相关文档">
+          <a href="index.html#overview">查看汇报版 ↗</a>
+          <a href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=sheet_range%3Dst-e3418cb7-17835_0_2_1_1" target="_blank" rel="noopener noreferrer">查看原始记录 ↗</a>
+        </nav>
+      </div>
+      <nav class="cover-index" aria-label="封面章节索引">
+        <a href="#interaction-diagnosis"><span>一、</span>交互体验诊断 · 55 项</a>
+        <a href="#visual-diagnosis"><span>二、</span>视觉体验诊断 · 25 项</a>
+      </nav>
+    </div>
+  </section>
+
+  <div class="report-layout">
+    <aside class="contents" aria-label="诊断目录">
+      <p class="contents-label">诊断目录</p>
+      <nav>
+        <a class="chapter-link active" href="#cover">封面</a>
+        <a class="chapter-link" href="#interaction-diagnosis"><span>一、</span>交互体验诊断</a>
+        <div class="chapter-subnav" aria-label="交互体验诊断子目录"><a href="#block-43">功能发现与全局导航架构</a><a href="#block-48">输入控制、表单校验与状态反馈</a><a href="#block-52">任务流程连续性与高密度信息处理</a><a href="#block-56">跨模块交互一致性与新手学习成本</a></div>
+        <a class="chapter-link" href="#visual-diagnosis"><span>二、</span>视觉体验诊断</a>
+        <div class="chapter-subnav" aria-label="视觉体验诊断子目录"><a href="#block-59">色彩体系与视觉降噪</a><a href="#block-63">字体层级与无障碍可读性</a><a href="#block-67">空间布局密度与间距规范</a><a href="#block-71">组件规范与图标语义一致性</a></div>
+      </nav>
+      <p class="contents-note">80 项体验发现<br>55 项交互问题<br>25 项视觉问题</p>
+    </aside>
+
+    <main class="report-main">
+      <section class="report-section" id="interaction-diagnosis">
+      <header class="section-heading">
+        <span class="section-number">一、</span>
+        <div><h2>交互体验诊断</h2><p>功能发现、输入反馈、任务连续性与跨模块一致性，共 55 项。</p></div>
+      </header>
+      <aside class="record-note" aria-label="统计口径"><strong>统计口径：</strong>本记录与汇报版使用同一批 80 项体验发现；内容按诊断主题组织，同一问题可能在不同诊断角度被引用，数量不重复累加。问题编号及链接沿用原始走查记录。</aside>
+      <div class="evidence-toolbar"><button type="button" class="evidence-expand" data-expand-group="interaction-records" aria-expanded="false">展开全部诊断</button></div>
+      <div class="evidence-group" id="interaction-records"><details class="evidence diagnosis-topic" id="block-43">
+      <summary>
+        <span class="evidence-ids"><strong>01</strong>17 项</span>
+        <span class="evidence-title"><strong>功能发现与全局导航架构</strong></span>
+        <span class="evidence-toggle" aria-hidden="true">+</span>
+      </summary>
+      <div class="evidence-body diagnosis-topic-body"><p class="body-copy " id="block-44"><strong class="paragraph-lead">聚合工作台与首屏导流：</strong>缺失工作台主控锚点、二次触达（最近检索/监控预警）与 AI 场景化销售位（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1634636165077" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-002 原始记录（钉钉文档，新标签页）" title="查看 Q-002 原始记录">Q-002</a>）；简单检索首屏未利用留白做高频能力导流（关联 <a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1597536563825" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-004 原始记录（钉钉文档，新标签页）" title="查看 Q-004 原始记录">Q-004</a>）；导出页缺乏向“站内专利分析”的转化引导（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1945662975590" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-038 原始记录（钉钉文档，新标签页）" title="查看 Q-038 原始记录">Q-038</a>）。</p><p class="body-copy " id="block-45"><strong class="paragraph-lead">帮助体系寻路断层：</strong>产品操作页顶栏无帮助入口，右下角仅留人工客服胶囊（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D988568840378" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-001 原始记录（钉钉文档，新标签页）" title="查看 Q-001 原始记录">Q-001</a>）；帮助中心点击“产品中心-智能检索”错跳至外部官网营销页而非文档目录（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1934367381861" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-020 原始记录（钉钉文档，新标签页）" title="查看 Q-020 原始记录">Q-020</a>）；帮助中心内模块命名滞后（外观检索仍叫图像检索）、缺失 6 个核心检索模块说明且混入“工作空间”文档（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1507723356305" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-021 原始记录（钉钉文档，新标签页）" title="查看 Q-021 原始记录">Q-021</a>）。</p><p class="body-copy " id="block-46"><strong class="paragraph-lead">跨模块导航与标识一致性：</strong>AI 检索无顶栏且采用独立路径 ai-creator（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D383389985473" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-048 原始记录（钉钉文档，新标签页）" title="查看 Q-048 原始记录">Q-048</a>、<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1587079250657" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-049 原始记录（钉钉文档，新标签页）" title="查看 Q-049 原始记录">Q-049</a>）；导出页左上角 Logo 突变为企业品牌 Logo（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D218572879722" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-036 原始记录（钉钉文档，新标签页）" title="查看 Q-036 原始记录">Q-036</a>）；扩展检索在侧边栏存在但在顶部快捷导航缺失（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1198734907242" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-062 原始记录（钉钉文档，新标签页）" title="查看 Q-062 原始记录">Q-062</a>）。</p><p class="body-copy " id="block-47"><strong class="paragraph-lead">核心功能语义与结构化发现：</strong>外观检索未展示支持的专利类型（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D780494168901" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-026 原始记录（钉钉文档，新标签页）" title="查看 Q-026 原始记录">Q-026</a>）；检索式检索下方 4 列平铺 400+ 浅蓝字段无分类，且结果 Count 值沦为视觉夹心层（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1699167267784" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-031 原始记录（钉钉文档，新标签页）" title="查看 Q-031 原始记录">Q-031</a>）；顶栏“默认/默认项目”下拉框无业务隐喻（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1846147622362" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-046 原始记录（钉钉文档，新标签页）" title="查看 Q-046 原始记录">Q-046</a>）；公司组添加入口位置倒挂（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D475821810109" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-059 原始记录（钉钉文档，新标签页）" title="查看 Q-059 原始记录">Q-059</a>）；专利申请前评估列表/快速评估/深度评估入口弱化、模式差异黑盒、缺少页面标题及返回机制（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D680790369488" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-068 原始记录（钉钉文档，新标签页）" title="查看 Q-068 原始记录">Q-068</a>、<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D627214224957" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-071 原始记录（钉钉文档，新标签页）" title="查看 Q-071 原始记录">Q-071</a>、<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1709405383910" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-074 原始记录（钉钉文档，新标签页）" title="查看 Q-074 原始记录">Q-074</a>、<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D393636979348" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-080 原始记录（钉钉文档，新标签页）" title="查看 Q-080 原始记录">Q-080</a>）。</p></div>
+    </details><details class="evidence diagnosis-topic" id="block-48">
+      <summary>
+        <span class="evidence-ids"><strong>02</strong>14 项</span>
+        <span class="evidence-title"><strong>输入控制、表单校验与状态反馈</strong><span class="diagnosis-topic-composition">输入控制 11 项 + 状态反馈 3 项</span></span>
+        <span class="evidence-toggle" aria-hidden="true">+</span>
+      </summary>
+      <div class="evidence-body diagnosis-topic-body"><p class="body-copy " id="block-49"><strong class="paragraph-lead">上传与输入限制规则前置透传：</strong>外观检索与融合检索图片上传框缺少数量上限（最多 4 张）、格式（JPG/JPEG/PNG）或大小（≤4M）前置说明（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1872827188656" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-024 原始记录（钉钉文档，新标签页）" title="查看 Q-024 原始记录">Q-024</a>、<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1372768045736" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-028 原始记录（钉钉文档，新标签页）" title="查看 Q-028 原始记录">Q-028</a>）；导入案件缺少“单次最多 10 个案件”前置说明与前端即时拦截（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D503925160269" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-075 原始记录（钉钉文档，新标签页）" title="查看 Q-075 原始记录">Q-075</a>）；融合检索语义模块切至“申请号/公开号”时仍沿用 0/20000 字符计数器，与“仅支持单个号码”冲突（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1460625231818" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-029 原始记录（钉钉文档，新标签页）" title="查看 Q-029 原始记录">Q-029</a>）。</p><p class="body-copy " id="block-50"><strong class="paragraph-lead">表单必填校验心智统一：</strong>专利监控对话框、专利集合监控、审查文件监控、公司组中的“邮箱”“监控类型”“公司组名称”默认均为非必填样式，点击确定后才报错拦截（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1245287150491" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-042 原始记录（钉钉文档，新标签页）" title="查看 Q-042 原始记录">Q-042</a>、<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1291240724240" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-054 原始记录（钉钉文档，新标签页）" title="查看 Q-054 原始记录">Q-054</a>、<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D656252587626" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-055 原始记录（钉钉文档，新标签页）" title="查看 Q-055 原始记录">Q-055</a>、<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1587342171471" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-061 原始记录（钉钉文档，新标签页）" title="查看 Q-061 原始记录">Q-061</a>）。</p><p class="body-copy " id="block-51"><strong class="paragraph-lead">热区防遮挡与状态诚实性：</strong>右下角「在线咨询」遮挡外观检索、融合检索底部「检索」按钮一半以上可点击区域，建议锁定底部操作栏右侧 ≥140px 安全边距或收缩客服为微型图标（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1224147888476" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-030 原始记录（钉钉文档，新标签页）" title="查看 Q-030 原始记录">Q-030</a>）；新创性对比非中国专利动态禁用（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1455435548143" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-012 原始记录（钉钉文档，新标签页）" title="查看 Q-012 原始记录">Q-012</a>）；帮助中心闪断告知机制（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1030082116346" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-022 原始记录（钉钉文档，新标签页）" title="查看 Q-022 原始记录">Q-022</a>）；专利交易双滚动条与经纪人真实状态管理（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D756085157780" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-065 原始记录（钉钉文档，新标签页）" title="查看 Q-065 原始记录">Q-065</a>）；快速评估选项用途与“批量导入 vs 手动填写”命名明确化（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1420807437480" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-072 原始记录（钉钉文档，新标签页）" title="查看 Q-072 原始记录">Q-072</a>）。</p></div>
+    </details><details class="evidence diagnosis-topic" id="block-52">
+      <summary>
+        <span class="evidence-ids"><strong>03</strong>19 项</span>
+        <span class="evidence-title"><strong>任务流程连续性与高密度信息处理</strong><span class="diagnosis-topic-composition">任务连续性 10 项 + 信息处理 9 项</span></span>
+        <span class="evidence-toggle" aria-hidden="true">+</span>
+      </summary>
+      <div class="evidence-body diagnosis-topic-body"><p class="body-copy " id="block-53"><strong class="paragraph-lead">多步骤与跨页上下文保持：</strong>列表跨页多选累加（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D385689186614" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-005 原始记录（钉钉文档，新标签页）" title="查看 Q-005 原始记录">Q-005</a>）；设置弹窗补齐或清理“分页记忆”误导提示（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1530110614526" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-009 原始记录（钉钉文档，新标签页）" title="查看 Q-009 原始记录">Q-009</a>）；外观检索清空后重进回填治理（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D393050555906" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-025 原始记录（钉钉文档，新标签页）" title="查看 Q-025 原始记录">Q-025</a>）；批量检索切 Tab 状态保持（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1329487623451" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-034 原始记录（钉钉文档，新标签页）" title="查看 Q-034 原始记录">Q-034</a>）；项目检索表格显化归属项目（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1540488006207" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-047 原始记录（钉钉文档，新标签页）" title="查看 Q-047 原始记录">Q-047</a>）；融合检索、专利监控、专利交易、填写案件 1440px 首屏主按钮吸底改造（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D197790524980" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-027 原始记录（钉钉文档，新标签页）" title="查看 Q-027 原始记录">Q-027</a>、<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1294411809487" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-056 原始记录（钉钉文档，新标签页）" title="查看 Q-056 原始记录">Q-056</a>、<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1648730994132" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-057 原始记录（钉钉文档，新标签页）" title="查看 Q-057 原始记录">Q-057</a>、<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1100611284708" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-064 原始记录（钉钉文档，新标签页）" title="查看 Q-064 原始记录">Q-064</a>、<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1000893662077" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-077 原始记录（钉钉文档，新标签页）" title="查看 Q-077 原始记录">Q-077</a>）。</p><p class="body-copy " id="block-54"><strong class="paragraph-lead">状态冲突与异常信息显性化：</strong>列表筛选关键词时“暂无数据（空箱插画）”与“正在加载（Loading）”同时叠加显示，需移除底层空状态仅展示带进度预期的 Loading（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D591957414481" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-010 原始记录（钉钉文档，新标签页）" title="查看 Q-010 原始记录">Q-010</a>）；评估列表“导入失败”直接外置展示失败原因（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D511511115865" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-069 原始记录（钉钉文档，新标签页）" title="查看 Q-069 原始记录">Q-069</a>）；快速评估补充多步流程进度条（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1253053631650" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-073 原始记录（钉钉文档，新标签页）" title="查看 Q-073 原始记录">Q-073</a>）。</p><p class="body-copy " id="block-55"><strong class="paragraph-lead">操作解耦与数据表达：</strong>导出页扩充视口宽度并构建 298 个字段的分类折叠树（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D437480833661" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-037 原始记录（钉钉文档，新标签页）" title="查看 Q-037 原始记录">Q-037</a>）；项目检索“全球数据库”Tooltip 改为右上对齐防止左侧碰撞抖动（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1775409645907" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-045 原始记录（钉钉文档，新标签页）" title="查看 Q-045 原始记录">Q-045</a>）；公司组统计指标改为“可选上限数:10 丨 去重数量:0 丨 总数量:0”明确映射（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1484747399062" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-060 原始记录（钉钉文档，新标签页）" title="查看 Q-060 原始记录">Q-060</a>）；评估列表补齐单行“删除”操作以区分右上角“批量删除”（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1546836923234" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-070 原始记录（钉钉文档，新标签页）" title="查看 Q-070 原始记录">Q-070</a>）；质检报告将弹窗标题“根据审查人员构思的中文文本”统一为触发入口名称「结论建议」（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1275608233265" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-078 原始记录（钉钉文档，新标签页）" title="查看 Q-078 原始记录">Q-078</a>）。</p></div>
+    </details><details class="evidence diagnosis-topic" id="block-56">
+      <summary>
+        <span class="evidence-ids"><strong>04</strong>5 项</span>
+        <span class="evidence-title"><strong>跨模块交互一致性与新手学习成本</strong><span class="diagnosis-topic-composition">一致性 4 项 + 学习成本 1 项</span></span>
+        <span class="evidence-toggle" aria-hidden="true">+</span>
+      </summary>
+      <div class="evidence-body diagnosis-topic-body"><p class="body-copy " id="block-57"><strong class="paragraph-lead">全局微交互与组件边距标准：</strong>专利详情页顶部公开号复制无反馈，而摘要/发明要点复制有 Message 提示，需建立全局统一的复制成功/失败 Message 规范（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1009941126001" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-017 原始记录（钉钉文档，新标签页）" title="查看 Q-017 原始记录">Q-017</a>）；全模块「清空」二次确认弹窗规则统一（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1570251124202" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-035 原始记录（钉钉文档，新标签页）" title="查看 Q-035 原始记录">Q-035</a>）；「监控提醒」与「保存到工作空间」对话框底部按钮上边距统一（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1259673772276" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-041 原始记录（钉钉文档，新标签页）" title="查看 Q-041 原始记录">Q-041</a>）；九宫格各产品顶栏「意见反馈」「售前咨询」能力对齐（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1175713631142" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-067 原始记录（钉钉文档，新标签页）" title="查看 Q-067 原始记录">Q-067</a>）；专利交易卖家空状态新手引导（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D381831373833" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-066 原始记录（钉钉文档，新标签页）" title="查看 Q-066 原始记录">Q-066</a>）。</p></div>
+    </details></div>
+    </section><section class="report-section" id="visual-diagnosis">
+      <header class="section-heading">
+        <span class="section-number">二、</span>
+        <div><h2>视觉体验诊断</h2><p>色彩、字体可读性、空间布局及组件图标规范，共 25 项。</p></div>
+      </header>
+      
+      <div class="evidence-toolbar"><button type="button" class="evidence-expand" data-expand-group="visual-records" aria-expanded="false">展开全部诊断</button></div>
+      <div class="evidence-group" id="visual-records"><details class="evidence diagnosis-topic" id="block-59">
+      <summary>
+        <span class="evidence-ids"><strong>05</strong>9 项</span>
+        <span class="evidence-title"><strong>色彩体系与视觉降噪</strong></span>
+        <span class="evidence-toggle" aria-hidden="true">+</span>
+      </summary>
+      <div class="evidence-body diagnosis-topic-body"><p class="body-copy " id="block-60"><strong class="paragraph-lead">交互链接色收敛与统一（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D419590811584" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-006 原始记录（钉钉文档，新标签页）" title="查看 Q-006 原始记录">Q-006</a>、<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1339935683998" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-007 原始记录（钉钉文档，新标签页）" title="查看 Q-007 原始记录">Q-007</a>、<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1094960205911" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-033 原始记录（钉钉文档，新标签页）" title="查看 Q-033 原始记录">Q-033</a>、<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1484747399062" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-060 原始记录（钉钉文档，新标签页）" title="查看 Q-060 原始记录">Q-060</a>）：</strong>专利列表页公开号、标题、申请人、分类号、申请号全用高亮蓝，造成“全屏蓝色过载”；且同页蓝色色值分裂（公开号 #0865FD vs 其他 #4077E5），批量检索页又出现 #2E9FE6（对比 #0865FD）；不可点击的“法律状态标签”与公司组“去重数量”也误用蓝色。规范建议：一屏内蓝色仅赋予主操作/核心主链接（如公开号）/选中态；次要可点击字段默认采用中性色，仅在 Hover 时变蓝并加下划线；不可点击的标签与数字严格回归中性色。</p><p class="body-copy " id="block-61"><strong class="paragraph-lead">中性色阶梯规范（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D633589926725" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-008 原始记录（钉钉文档，新标签页）" title="查看 Q-008 原始记录">Q-008</a>、<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D473745507536" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-053 原始记录（钉钉文档，新标签页）" title="查看 Q-053 原始记录">Q-053</a>）：</strong>检索结果页提取出 6 种字体中性色，色偏不一（偏灰 vs 偏蓝）、透明色（#000000D9 85%黑）与实色混用、同级标题色值不一（#000000D9 vs #2B2E36）；3D 地图不可改数据源误用可编辑深色字。规范建议：建立标准实色中性色阶梯（严禁使用透明度色值）：Primary Text（一级标题/核心文字）、Secondary Text（二级正文/次要信息）、Hint Text（三级弱化/占位提示）、Disabled Text（禁用态文字）。</p><p class="body-copy " id="block-62"><strong class="paragraph-lead">标签语义色、高亮色与品牌色同步（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1941822578537" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-016 原始记录（钉钉文档，新标签页）" title="查看 Q-016 原始记录">Q-016</a>、<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1060931587214" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-032 原始记录（钉钉文档，新标签页）" title="查看 Q-032 原始记录">Q-032</a>、<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D604411848811" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-039 原始记录（钉钉文档，新标签页）" title="查看 Q-039 原始记录">Q-039</a>、<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D914692190656" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-051 原始记录（钉钉文档，新标签页）" title="查看 Q-051 原始记录">Q-051</a>）：</strong>专利详情页与期刊页标签混用“浅绿底+绿字、深绿底+白字、绿边框+绿字”（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1941822578537" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-016 原始记录（钉钉文档，新标签页）" title="查看 Q-016 原始记录">Q-016</a>）；期刊检索关键字与 Count 高亮用正红 #FF0000 而简单检索用粉底 #FFC2C2（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D914692190656" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-051 原始记录（钉钉文档，新标签页）" title="查看 Q-051 原始记录">Q-051</a>）；批量检索输入框选中时内部按钮分割线异常变色（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1060931587214" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-032 原始记录（钉钉文档，新标签页）" title="查看 Q-032 原始记录">Q-032</a>）；导出 Excel 表头仍残留旧版“知呱呱”绿色主题色（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D604411848811" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-039 原始记录（钉钉文档，新标签页）" title="查看 Q-039 原始记录">Q-039</a>）。规范建议：统一标签为“低饱和度浅色填充+同色系深字”；统一全站命中高亮样式；替换导出表头为星河最新品牌主题色。</p></div>
+    </details><details class="evidence diagnosis-topic" id="block-63">
+      <summary>
+        <span class="evidence-ids"><strong>06</strong>4 项</span>
+        <span class="evidence-title"><strong>字体层级与无障碍可读性</strong><span class="diagnosis-topic-composition">字体层级 1 项 + 适配可读 3 项</span></span>
+        <span class="evidence-toggle" aria-hidden="true">+</span>
+      </summary>
+      <div class="evidence-body diagnosis-topic-body"><p class="body-copy " id="block-64"><strong class="paragraph-lead">WCAG 2.1 AA 对比度达标整改（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1779390126057" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-018 原始记录（钉钉文档，新标签页）" title="查看 Q-018 原始记录">Q-018</a>）：</strong>专利详情页时间轴模块（申请日、授权日等）文字与纯白底对比度仅为 1.49:1，远低于 WCAG 2.1 AA 级要求的 ≥ 4.5:1 标准，需立即加深三级辅助文字色值。</p><p class="body-copy " id="block-65"><strong class="paragraph-lead">字号层级倒挂治理（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1519347617049" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-050 原始记录（钉钉文档，新标签页）" title="查看 Q-050 原始记录">Q-050</a>）：</strong>AI 检索输入框 Placeholder 字号为 16px，反超正文与操作文字的 14px，且内部堆砌 3 行编号说明。需将输入框提示字号回调至 14px，并将长篇使用说明外置驻留。</p><p class="body-copy " id="block-66"><strong class="paragraph-lead">交互态对比度与弹窗高度约束（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D277676573312" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-052 原始记录（钉钉文档，新标签页）" title="查看 Q-052 原始记录">Q-052</a>、<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D484621917279" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-076 原始记录（钉钉文档，新标签页）" title="查看 Q-076 原始记录">Q-076</a>）：</strong>修复专利对比“搜索相似点”按钮 Hover 态背景透明导致的文字重叠不可读；为导入案件弹窗文件列表设置 max-height 与内部滚动，改为“左列表+右选填信息”双栏布局防止撑破视窗。</p></div>
+    </details><details class="evidence diagnosis-topic" id="block-67">
+      <summary>
+        <span class="evidence-ids"><strong>07</strong>5 项</span>
+        <span class="evidence-title"><strong>空间布局密度与间距规范</strong></span>
+        <span class="evidence-toggle" aria-hidden="true">+</span>
+      </summary>
+      <div class="evidence-body diagnosis-topic-body"><p class="body-copy " id="block-68"><strong class="paragraph-lead">首屏背景与视觉焦点（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1597536563825" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-004 原始记录（钉钉文档，新标签页）" title="查看 Q-004 原始记录">Q-004</a>）：</strong>简单检索背景图片模糊且大面积蓝紫渐变抢夺视线，建议收敛背景光效、采用纯净白底/浅底留白突出搜索框，并在下方合理布局轻量卡片入口。</p><p class="body-copy " id="block-69"><strong class="paragraph-lead">控件间距与防重叠（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D735266553980" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-011 原始记录（钉钉文档，新标签页）" title="查看 Q-011 原始记录">Q-011</a>、<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D496765811369" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-043 原始记录（钉钉文档，新标签页）" title="查看 Q-043 原始记录">Q-043</a>、<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1340161769358" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-058 原始记录（钉钉文档，新标签页）" title="查看 Q-058 原始记录">Q-058</a>）：</strong>列表页顶部超长检索式下拉浮层（#FFFFFF）需增加描边/阴影与浅底区分，右侧数值与下拉控件间锁定最小 4px 间距防重叠（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D735266553980" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-011 原始记录（钉钉文档，新标签页）" title="查看 Q-011 原始记录">Q-011</a>）；监控提醒对话框上下堆叠且边缘重合的两个下拉框改为同行并排（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D496765811369" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-043 原始记录（钉钉文档，新标签页）" title="查看 Q-043 原始记录">Q-043</a>）；统一「检索历史」与「已保存检索式」搜索框的上下边距（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1340161769358" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-058 原始记录（钉钉文档，新标签页）" title="查看 Q-058 原始记录">Q-058</a>）。</p><p class="body-copy " id="block-70"><strong class="paragraph-lead">长文本结构化排版（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D906518969932" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-079 原始记录（钉钉文档，新标签页）" title="查看 Q-079 原始记录">Q-079</a>）：</strong>质检报告「结论与建议」弹窗内纯文字段落行距紧凑形成“文本砖”，建议直接合入左侧「质量总评」Tab 并拆解为结构化主题卡片。</p></div>
+    </details><details class="evidence diagnosis-topic" id="block-71">
+      <summary>
+        <span class="evidence-ids"><strong>08</strong>7 项</span>
+        <span class="evidence-title"><strong>组件规范与图标语义一致性</strong><span class="diagnosis-topic-composition">组件图标 4 项 + 视觉一致性 3 项</span></span>
+        <span class="evidence-toggle" aria-hidden="true">+</span>
+      </summary>
+      <div class="evidence-body diagnosis-topic-body"><p class="body-copy " id="block-72"><strong class="paragraph-lead">基础组件库：</strong>解决专利详情页单页出现 3 种不同 Tooltip 样式（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1182187987138" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-014 原始记录（钉钉文档，新标签页）" title="查看 Q-014 原始记录">Q-014</a>）及语义检索同页 Tooltip 消失延时不一致（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1559689218907" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-023 原始记录（钉钉文档，新标签页）" title="查看 Q-023 原始记录">Q-023</a>）；解决同一「监控提醒」对话框内输入框宽度与高度不一致问题（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1842318698746" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-044 原始记录（钉钉文档，新标签页）" title="查看 Q-044 原始记录">Q-044</a>）；将简单检索的“帮助中心”与高级检索、融合检索的“操作指南”统一命名（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1604763784590" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-019 原始记录（钉钉文档，新标签页）" title="查看 Q-019 原始记录">Q-019</a>）。</p><p class="body-copy " id="block-73"><strong class="paragraph-lead">图标规范与防语义冲突：</strong>同页面不同 Tab 内提示图标样式统一（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1312221814049" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-015 原始记录（钉钉文档，新标签页）" title="查看 Q-015 原始记录">Q-015</a>）；修正方向悖论（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1423624133476" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-040 原始记录（钉钉文档，新标签页）" title="查看 Q-040 原始记录">Q-040</a>）：列表页「导出」图标使用了代表上传的向上箭头（详情页下载为向下箭头），需统一修正为符合下载心智的图标；消除气泡符号冲突（<a class="q-record-link" href="https://alidocs.dingtalk.com/i/nodes/YQBnd5ExVEw1rZ92t6Ol3G0K8yeZqMmz?utm_scene=person_space&amp;iframeQuery=anchorId%3D1212089306467" target="_blank" rel="noopener noreferrer" aria-label="查看 Q-063 原始记录（钉钉文档，新标签页）" title="查看 Q-063 原始记录">Q-063</a>）：区分顶栏「专利交易」与右下角「在线咨询」图标。</p></div>
+    </details></div>
+    </section>
+      <footer class="report-footer">
+        <a href="index.html#overview">返回汇报版 ↗</a>
+        <a href="#cover">返回封面 ↑</a>
+      </footer>
+    </main>
+  </div>
+  <script>(() => {
+  const chapterLinks = Array.from(document.querySelectorAll('.chapter-link'));
+  const chapters = chapterLinks.map((link) => document.querySelector(link.getAttribute('href'))).filter(Boolean);
+  const progress = document.querySelector('.reading-progress > span');
+  const expandButtons = Array.from(document.querySelectorAll('[data-expand-group]'));
+  let printState = [];
+
+  const setActiveChapter = () => {
+    const current = [...chapters].reverse().find((chapter) => chapter.getBoundingClientRect().top <= 90) || chapters[0];
+    chapterLinks.forEach((link) => {
+      const active = current && link.getAttribute('href') === `#${current.id}`;
+      link.classList.toggle('active', active);
+      if (active) link.setAttribute('aria-current', 'true');
+      else link.removeAttribute('aria-current');
+    });
+  };
+
+  const updateProgress = () => {
+    if (!progress) return;
+    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+    const ratio = scrollable > 0 ? Math.min(1, window.scrollY / scrollable) : 0;
+    progress.style.width = `${ratio * 100}%`;
+  };
+
+  const syncExpandButton = (button) => {
+    const group = document.getElementById(button.dataset.expandGroup);
+    if (!group) return;
+    const details = Array.from(group.querySelectorAll('details.evidence'));
+    const allOpen = details.length > 0 && details.every((item) => item.open);
+    button.setAttribute('aria-expanded', String(allOpen));
+    button.textContent = allOpen ? '收起全部诊断' : '展开全部诊断';
+  };
+
+  expandButtons.forEach((button) => {
+    const group = document.getElementById(button.dataset.expandGroup);
+    if (!group) return;
+    button.addEventListener('click', () => {
+      const details = Array.from(group.querySelectorAll('details.evidence'));
+      const shouldOpen = !details.every((item) => item.open);
+      details.forEach((item) => { item.open = shouldOpen; });
+      syncExpandButton(button);
+    });
+    group.addEventListener('toggle', () => syncExpandButton(button), true);
+    syncExpandButton(button);
+  });
+
+  const revealHashTarget = () => {
+    if (!location.hash) return;
+    const target = document.querySelector(location.hash);
+    if (!target) return;
+    const details = target.matches('details') ? target : target.closest('details');
+    if (details) details.open = true;
+  };
+
+  window.addEventListener('scroll', () => { setActiveChapter(); updateProgress(); }, { passive: true });
+  window.addEventListener('resize', setActiveChapter);
+  window.addEventListener('hashchange', revealHashTarget);
+  window.addEventListener('beforeprint', () => {
+    const details = Array.from(document.querySelectorAll('details.evidence'));
+    printState = details.map((item) => item.open);
+    details.forEach((item) => { item.open = true; });
+  });
+  window.addEventListener('afterprint', () => {
+    document.querySelectorAll('details.evidence').forEach((item, index) => { item.open = printState[index] ?? false; });
+    expandButtons.forEach(syncExpandButton);
+  });
+
+  revealHashTarget();
+  setActiveChapter();
+  updateProgress();
+})();
+</script>
+</body>
+</html>
